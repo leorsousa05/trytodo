@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  mysql_server:
+    image: mysql:8.0
+    container_name: mysql_server
+    environment:
+      MYSQL_ROOT_PASSWORD: "admin"
+      MYSQL_DATABASE: "admin"
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./docker_data/mysql:/var/lib/mysql
