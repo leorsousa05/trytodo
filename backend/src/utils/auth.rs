@@ -28,7 +28,7 @@ impl Claims {
     }
 }
 
-pub fn sign() -> Result<String, jsonwebtoken::errors::Error> {
+pub fn create_token() -> Result<String, jsonwebtoken::errors::Error> {
     encode(
         &Header::default(),
         &Claims::new(),

@@ -4,7 +4,7 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 use diesel::{ QueryDsl, ExpressionMethods, SelectableHelper, RunQueryDsl };
 use diesel::insert_into;
 use serde::{ Serialize, Deserialize };
-use crate::utils::auth::{sign, verify_token};
+use crate::utils::auth::{create_token, verify_token};
 use crate::utils::models::{User, NewUser, AuthUser};
 use crate::utils::schema::user::dsl::*;
 use crate::database::DB_CONNECTION;
@@ -91,7 +91,7 @@ pub async fn authenticate(Json(body): Json<AuthUser>) -> (StatusCode, Json<Serve
         return (StatusCode::BAD_REQUEST, ServerResponse::error("Password is Wrong!"));
     }
 
-    let token = sign().unwrap();
+    let token = create_token().unwrap();
 
     (StatusCode::OK, ServerResponse::data(token))
 }

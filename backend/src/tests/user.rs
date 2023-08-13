@@ -41,19 +41,27 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn authentication() {
+    async fn user_authentication() {
         let app = app();
 
-        let user_data = json!({
+        let success_user_data = json!({
             "email": "leorsousa05@gmail.com",
             "password": "190405lrs"
         });
 
-        let request = api_request(Method::POST, user_data, "/auth".into());
+        let fail_user_data = json!({
+            "email": "error@gmail.com",
+            "password": "Error"
+        });
 
-        let response = app.oneshot(request).await.unwrap();
+        let success_request = api_request(Method::POST, success_user_data, "/auth".into());
+        let fail_request = api_request(Method::POST, fail_user_data, "/auth".into());
 
-        assert_eq!(response.status(), StatusCode::OK)
+        let success_response = app.clone().oneshot(success_request).await.unwrap();
+        let fail_response = app.oneshot(fail_request).await.unwrap();
+
+        assert_eq!(success_response.status(), StatusCode::OK);
+        assert_eq!(fail_response.status(), StatusCode::BAD_REQUEST);
     }
 
 }
