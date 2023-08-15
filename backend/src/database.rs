@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use diesel::MysqlConnection;
 use lazy_static::lazy_static; 
-use crate::utils::models::connect;
+use crate::utils::server::connect;
 
 lazy_static! {
     pub static ref DB_CONNECTION: Arc<Mutex<MysqlConnection>> = Arc::new(Mutex::new(connect().unwrap()));

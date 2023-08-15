@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::utils::{models::connect, auth::{create_token, verify_token}};
+    use crate::utils::{server::connect, auth::{create_token, verify_token}};
 
     #[test]
     fn database_connection() {

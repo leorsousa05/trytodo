@@ -3,41 +3,12 @@ use axum::Json;
 use bcrypt::{hash, verify, DEFAULT_COST};
 use diesel::{ QueryDsl, ExpressionMethods, SelectableHelper, RunQueryDsl };
 use diesel::insert_into;
-use serde::{ Serialize, Deserialize };
+use serde_derive::Deserialize;
 use crate::utils::auth::{create_token, verify_token};
-use crate::utils::models::{User, NewUser, AuthUser};
+use crate::models::user::{ User, CreateUser, AuthUser };
 use crate::utils::schema::user::dsl::*;
 use crate::database::DB_CONNECTION;
-
-#[derive(Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum ServerResponse<T> {
-    Data(T),
-    Error(ResponseError)
-}
-
-impl<T> ServerResponse<T> {
-    pub fn data(data: T) -> Json<Self> {
-        Json(Self::Data(data))
-    }
-
-    pub fn error<E: AsRef<str>>(error: E) -> Json<Self> {
-        Json(ServerResponse::Error(ResponseError::new(error)))
-    }
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ResponseError {
-    pub message: String
-}
-
-impl ResponseError {
-    pub fn new<T: AsRef<str>>(message: T) -> Self {
-        Self {
-            message: message.as_ref().to_owned()
-        }
-    }
-}
+use crate::utils::server::ServerResponse;
 
 pub async fn select_users() -> (StatusCode, Json<ServerResponse<Vec<User>>>) {
     let mut db = DB_CONNECTION.lock().unwrap();
@@ -53,13 +24,13 @@ pub async fn select_users() -> (StatusCode, Json<ServerResponse<Vec<User>>>) {
     (StatusCode::OK, ServerResponse::data(users.unwrap()))
 }
 
-pub async fn create_user(Json(body): Json<NewUser>) -> (StatusCode, Json<ServerResponse<String>>) {
+pub async fn create_user(Json(body): Json<CreateUser>) -> (StatusCode, Json<ServerResponse<String>>) {
     let db = &mut *DB_CONNECTION.lock().unwrap();
 
     let hashed_password = hash(body.password, DEFAULT_COST).unwrap();
 
     let users = insert_into(user)
-        .values(&NewUser {
+        .values(&CreateUser {
             name: body.name,
             password: hashed_password,
             email: body.email

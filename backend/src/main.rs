@@ -5,6 +5,7 @@ mod tests;
 mod routes;
 mod database;
 mod app;
+mod models;
 
 #[tokio::main]
 async fn main() {
