@@ -1,28 +1,14 @@
-use axum::{http::{ Request, Method }, body::Body};
-use serde_json::Value;
-
-#[allow(dead_code)]
-pub fn api_request(method: Method, body: Value, uri: String) -> Request<Body> {
-    Request::builder()
-        .header("content-type", "application/json")
-        .method(method)
-        .uri(uri)
-        .body(Body::from(body.to_string()))
-        .unwrap()
-}
-
 #[cfg(test)]
 mod tests {
     use axum::http::Method;
 
-    use super::api_request;
     use reqwest::StatusCode;
     use serde_json::json;
     use tower::ServiceExt;
 
-    use crate::app::app;
+    use crate::{app::app, utils::server::api_request};
 
-    #[ignore = "Not being used"]
+    #[ignore = "User creation!"]
     #[tokio::test]
     async fn user_creation() {
         let app = app();
@@ -63,6 +49,4 @@ mod tests {
         assert_eq!(success_response.status(), StatusCode::OK);
         assert_eq!(fail_response.status(), StatusCode::BAD_REQUEST);
     }
-
 }
-
